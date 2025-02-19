@@ -1,16 +1,22 @@
 name: BuildBear Deploy Action
 
-on: [push]
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-depth: 0
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
@@ -20,6 +26,12 @@ jobs:
       - name: Show Forge version
         run: forge --version
 
+      - name: Install dependencies
+        run: forge install
+
+      - name: Build contracts
+        run: forge build
+
       - name: Deploy with BuildBear
         uses: BuildBearLabs/buildbear_x_action@v1.5.0
         with: 
@@ -28,7 +40,11 @@ jobs:
               {
                 "chainId": 1,
                 "blockNumber": 19000000
+              },
+              {
+                "chainId": 10
               }
             ]
           deploy-command: "make exe"
           buildbear-token: "a"
+          working-directory: "."
