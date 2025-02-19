@@ -39,7 +39,7 @@ jobs:
             [
               {
                 "chainId": 1,
-                "blockNumber": 19000000
+                "blockNumber": 300
               },
               {
                 "chainId": 10
